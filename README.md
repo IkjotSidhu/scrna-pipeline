@@ -1,5 +1,7 @@
 # scRNA-seq pipeline
 
+![Illustrated path from droplets to quality-controlled single-cell profiles](assets/scrna-pipeline-banner.png)
+
 A practical Seurat pipeline for 10x Genomics single-cell RNA-seq data. It starts from Cell Ranger count matrices and produces an auditable Seurat object, QC reports, clustering diagnostics, marker tables, and annotation review sheets.
 
 It is designed for mouse or human skin, gut, and PBMC datasets, but uses a general sample manifest so other 10x studies can be added without rewriting the workflow.
