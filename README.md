@@ -1,62 +1,90 @@
-# Single-cell RNA-seq pipeline
+# scRNA-seq pipeline
 
-Development draft with a validated preprocessing pilot and clean environment restore. Cell-type annotation and downstream biological inference remain under development.
+A practical Seurat pipeline for 10x Genomics single-cell RNA-seq data. It starts from Cell Ranger count matrices and produces an auditable Seurat object, QC reports, clustering diagnostics, marker tables, and annotation review sheets.
 
-The pipeline supports local execution and Minerva/LSF. Configure input and output paths in your project YAML and manifest; no site-specific paths are required by the core workflow.
+It is designed for mouse or human skin, gut, and PBMC datasets, but uses a general sample manifest so other 10x studies can be added without rewriting the workflow.
 
-## Agreed requirements
+## What it does
 
-- Seurat-based R analysis of human or mouse 10x count matrices.
-- Skin, gut and PBMC studies; separate analysis groups for incompatible tissues/species/references.
-- **Ambient RNA correction and doublet removal are mandatory for every full run.**
-- SoupX with matched raw droplets; DecontX when only filtered counts are available. Methods and their diagnostics must be recorded per capture.
-- scDblFinder predicts doublets per physical capture; predicted doublets are excluded from final analysis objects.
-- Input-only QC inspection is allowed but is explicitly not a completed preprocessing run.
-- Compatible tissues and samples can share an `analysis_group` for one joint final object.
-- Harmony batch correction runs automatically when an analysis group includes multiple sequencing runs (`batch_id`); the unintegrated baseline is retained for audit. RPCA remains an alternative method.
-- Cell-type annotation will combine marker/reference evidence and optional Biomni assistance. The current draft only exports a review sheet; it does not call Biomni.
-- Minerva/LSF and local execution. Do not run heavy analysis on login nodes.
+1. Reads Cell Ranger filtered matrices and raw droplets when available.
+2. Removes ambient RNA with SoupX when raw droplets exist, otherwise DecontX.
+3. Calls and removes doublets with scDblFinder.
+4. Applies transparent cell-level QC rules and saves a ledger for every called cell.
+5. Runs Harmony automatically when an analysis group has more than one sequencing run.
+6. Generates table-first QC reports, visual QC reports by sample and sequencing run, and PCA/clustree diagnostics.
+7. Exports markers and a review sheet for broad and fine cell-type annotation.
 
-## Files and responsibilities
+## Quick start
 
-| Path | Purpose |
-|---|---|
-| `run.R` | Command-line entry point |
-| `config/project.yml` | One validated configuration; illustrative QC defaults |
-| `config/samples.csv` | One row per input matrix; optional barcode metadata identifies multiple captures within it |
-| `R/config.R` | Validate configuration, metadata and mandatory-stage policy |
-| `R/import.R` | Read 10x matrices and preserve gene IDs/symbols |
-| `R/process.R` | Ambient correction, doublets, filtering and Seurat analysis |
-| `R/engine.R` | Execute stages, fingerprint inputs and record provenance |
-| `R/report.R` | Render reports from saved summaries |
-| `R/qc_visual_report.R` | Render sample- and sequencing-run QC plot reports |
-| `R/downstream_diagnostics.R` | Render PCA and clustree diagnostics across resolutions 0.1–2.0 |
-| `scripts/submit_lsf.sh` | LSF template; account/resources require confirmation |
-| `scripts/setup.R` | Explicit dependency installation into a private library |
-| `docs/DEVELOPMENT.md` | Validation status, limitations and next steps |
-| `docs/DESIGN_DECISIONS.md` | Joint analysis, mitochondrial-QC, and report design |
-| `docs/BENCHMARK_DATASETS.md` | Curated normal-tissue benchmark candidates and provenance |
+```bash
+git clone https://github.com/IkjotSidhu/scrna-pipeline.git
+cd scrna-pipeline
+R -e 'renv::restore()'
+```
 
-## Intended commands (after validation and environment setup)
+1. Copy and edit [config/project.yml](config/project.yml).
+2. Copy and edit [config/samples.csv](config/samples.csv), with one row per Cell Ranger matrix.
+3. Inspect the input first:
 
 ```bash
 Rscript run.R qc config/project.yml
-Rscript run.R run config/project.yml
-Rscript run.R report /absolute/path/to/completed-run
-Rscript run.R qc-plots /absolute/path/to/completed-run
-Rscript run.R diagnostics /absolute/path/to/completed-run
 ```
 
-Configuration paths are resolved relative to the YAML file; matrix paths are resolved relative to the sample manifest. Analysis never installs dependencies automatically.
+4. After reviewing the input report, run the full pipeline:
 
-`ambient.method: auto` selects a method according to raw-matrix availability; it never skips correction. `none` is not valid for ambient correction or doublet detection. Disabling doublet removal is not supported.
+```bash
+Rscript run.R run config/project.yml
+```
 
-For multiplexed data, `cell_metadata` points to a CSV containing at least `barcode,capture_id`. It must cover every filtered barcode exactly once. scDblFinder splits and thresholds by `capture_id`; technical capture groups remain distinct from biological `sample_id` and `donor_id`.
+## Everyday commands
 
-Thresholds in the example configuration are starting values to review, not universal recommendations for skin, gut or PBMC. Counts in the `RNA` assay are ambient-adjusted estimates; original retained-cell UMI counts are kept in `RNA_observed`. Doublet scoring currently uses observed integer counts. Final QC uses corrected counts. These choices must be checked on the pilot.
+```bash
+Rscript run.R report /path/to/results/run-<id>
+Rscript run.R qc-plots /path/to/results/run-<id>
+Rscript run.R diagnostics /path/to/results/run-<id>
+```
 
-DR26001 has been processed as a development pilot; see `docs/DR26001_LESSONS.md`. This validates the implemented preprocessing path on that dataset, not every supported input type or biological use case.
+For Minerva, copy [scripts/submit_lsf.sh](scripts/submit_lsf.sh), fill in its placeholders, and submit it with `bsub`.
 
-## Git workflow
+## Input manifest
 
-`main` contains reviewed, working releases. Development continues on `dev`; changes should be tested there before being merged into `main`.
+`config/samples.csv` records sample metadata and paths. Required fields include `library_id`, `sample_id`, `species`, `tissue`, `condition`, `batch_id`, `analysis_group`, and `filtered_matrix`.
+
+- Use `raw_matrix` whenever available. It enables SoupX.
+- Use `cell_metadata` with `barcode,capture_id` for multiplexed libraries.
+- Keep biological samples in `sample_id`; put sequencing runs in `batch_id`.
+- Libraries in the same `analysis_group` are analyzed together only when their species and reference are compatible.
+
+## Results
+
+```text
+results/run-<id>/
+├── report.html                         # report index
+├── report-bioinformatics.html          # QC, retention, Cell Ranger metrics
+├── report-qc-by-sample.html            # visual QC by biological sample
+├── report-qc-by-sequencing-run.html    # visual QC by sequencing run
+├── report-downstream-diagnostics.html  # PCA and clustree review
+├── groups/<analysis-group>/seurat.rds  # final Seurat object
+├── groups/<analysis-group>/markers.csv
+├── groups/<analysis-group>/annotation_review.csv
+└── libraries/<library>/cell_ledger.csv # every called cell and its QC decision
+```
+
+The final object retains ambient-corrected values in `RNA` and observed retained-cell counts in `RNA_observed`.
+
+## Repository map
+
+| Folder | Contents |
+|---|---|
+| `config/` | Project and manifest templates |
+| `R/` | Pipeline implementation |
+| `scripts/` | Generic LSF template and benchmark downloader |
+| `benchmarks/` | Public benchmark registry and example configuration |
+| `docs/` | Benchmark notes and QC evidence |
+| `tests/` | Configuration, import, and report tests |
+
+Read [FAQ.md](FAQ.md) for ambient RNA, doublets, mitochondrial RNA, batch correction, and clustering. Benchmark sources are listed in [docs/BENCHMARK_DATASETS.md](docs/BENCHMARK_DATASETS.md).
+
+## Branches
+
+`dev` is the active development branch. `main` is the reviewed release branch.
