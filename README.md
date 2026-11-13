@@ -24,6 +24,21 @@ cd scrna-pipeline
 R -e 'renv::restore()'
 ```
 
+### Minerva setup
+
+On Minerva, first make the environment from the locked package versions:
+
+```bash
+git clone https://github.com/IkjotSidhu/scrna-pipeline.git
+cd scrna-pipeline
+bash scripts/minerva_restore.sh
+```
+
+The setup loads the required `R/4.4.1` module, clears inherited `R_LIBS*`
+paths, and uses this clone's `renv` library and cache. This prevents packages
+from a non-editable shared library or a user's unrelated R library from being
+silently mixed into the run. Do not set `SCRNA_R_LIB` for this pipeline.
+
 1. Copy and edit [config/project.yml](config/project.yml).
 2. Copy and edit [config/samples.csv](config/samples.csv), with one row per Cell Ranger matrix.
 3. Inspect the input first:
@@ -46,7 +61,7 @@ Rscript run.R qc-plots /path/to/results/run-<id>
 Rscript run.R diagnostics /path/to/results/run-<id>
 ```
 
-For Minerva, copy [scripts/submit_lsf.sh](scripts/submit_lsf.sh), fill in its placeholders, and submit it with `bsub`.
+For Minerva, run the setup once, then copy [scripts/submit_lsf.sh](scripts/submit_lsf.sh), fill in its placeholders, and submit it with `bsub`. The job template applies the same clean environment automatically.
 
 ## Input manifest
 

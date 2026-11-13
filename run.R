@@ -2,7 +2,6 @@
 args <- commandArgs(trailingOnly = TRUE)
 script_arg <- grep("^--file=", commandArgs(), value = TRUE)[1]
 root <- dirname(normalizePath(sub("^--file=", "", script_arg), mustWork = TRUE))
-if (nzchar(Sys.getenv("SCRNA_R_LIB"))) .libPaths(c(Sys.getenv("SCRNA_R_LIB"), .libPaths()))
 for (file in c("config.R", "import.R", "process.R", "report.R", "qc_visual_report.R", "downstream_diagnostics.R", "engine.R")) source(file.path(root, "R", file))
 if (length(args) != 2 || !args[1] %in% c("qc", "run", "report", "qc-plots", "diagnostics")) {
   cat("Usage: Rscript run.R qc|run config/project.yml\n       Rscript run.R report|qc-plots|diagnostics /path/to/run-directory\n")

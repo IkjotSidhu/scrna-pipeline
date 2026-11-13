@@ -10,6 +10,7 @@ pilots/*/config/samples.csv
 .Rproj.user/
 renv/library/
 renv/staging/
+.renv-cache/
 environment/restore-test/
 environment/initial-audit/
 environment/restore-test-sessionInfo.txt
