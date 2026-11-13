@@ -1,0 +1,31 @@
+project: public-mouse-tissue-benchmarks
+samples: samples.csv
+output: ../results
+seed: 142471
+workers: 1
+future_max_gb: 28
+qc:
+  preliminary_min_features: 50
+  min_counts: 500
+  min_features: 200
+  high_features_review: 10000
+  max_mt_percent: 25
+ambient:
+  method: auto
+doublets:
+  method: scDblFinder
+  expected_rate: 0
+analysis:
+  nfeatures: 2000
+  npcs: 30
+  resolution: 0.5
+  neighbors: 20
+  umap_neighbors: 30
+integration:
+  enabled: auto
+  method: harmony
+  batch_variable: batch_id
+markers:
+  enabled: false
+  min_pct: 0.1
+  logfc_threshold: 0.25

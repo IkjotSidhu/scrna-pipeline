@@ -1,0 +1,40 @@
+# Paths are relative to this configuration file, not the working directory.
+project: skin-gut-pbmc
+samples: samples.csv
+output: ../results
+seed: 42
+workers: 1
+future_max_gb: 4
+# Illustrative starting thresholds. Review the qc-only report before a full run.
+qc:
+  preliminary_min_features: 50
+  min_counts: 500
+  min_features: 200
+  # This is a diagnostic flag, not an exclusion rule. scDblFinder decides
+  # which predicted doublets are removed.
+  high_features_review: 10000
+  max_mt_percent: 25
+ambient:
+  # Required. auto resolves to soupx with raw droplets, otherwise decontx.
+  method: auto
+doublets:
+  # Required. All predicted doublets are excluded from final objects.
+  method: scDblFinder
+  # 0 asks scDblFinder to estimate its expected rate; set a fraction if known.
+  expected_rate: 0
+analysis:
+  nfeatures: 2000
+  npcs: 30
+  resolution: 0.5
+  neighbors: 20
+  umap_neighbors: 30
+integration:
+  # Harmony is automatically applied when an analysis group has more than one
+  # sequencing run (batch_id). A single sequencing run remains unintegrated.
+  enabled: auto
+  method: harmony
+  batch_variable: batch_id
+markers:
+  enabled: true
+  min_pct: 0.1
+  logfc_threshold: 0.25

@@ -1,0 +1,27 @@
+Package: scrnaPipeline
+Type: Project
+Title: Reproducible Single-Cell RNA-Seq Processing Pipeline
+Version: 0.1.0
+Authors@R: person("Ikjot", "Sidhu", role = "aut")
+Description: Project dependency declaration for a Seurat-based single-cell RNA-seq
+    processing pipeline with mandatory ambient RNA correction and doublet removal.
+License: MIT
+Encoding: UTF-8
+Imports:
+    BiocParallel,
+    decontX,
+    digest,
+    future,
+    ggplot2,
+    hdf5r,
+    harmony,
+    jsonlite,
+    Matrix,
+    renv,
+    scDblFinder,
+    Seurat,
+    SeuratObject,
+    SingleCellExperiment,
+    SoupX,
+    testthat,
+    yaml

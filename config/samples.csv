@@ -1,0 +1,3 @@
+library_id,sample_id,donor_id,species,tissue,condition,batch_id,reference_id,analysis_group,filtered_matrix,raw_matrix,cell_metadata,ambient_method,dataset_role,cellranger_metrics
+capture-01,sample-01,donor-01,human,skin,control,batch-01,GRCh38-2024A,human-skin,/replace/capture-01/filtered_feature_bc_matrix.h5,/replace/capture-01/raw_feature_bc_matrix.h5,,auto,study,/replace/capture-01/metrics_summary.csv
+capture-02,sample-02,donor-02,human,skin,treated,batch-01,GRCh38-2024A,human-skin,/replace/capture-02/filtered_feature_bc_matrix,,,auto,study,

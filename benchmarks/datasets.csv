@@ -1,0 +1,5 @@
+dataset_id,source_type,species,tissue,condition,chemistry,preparation,cellranger_version,reference_id,filtered_matrix,raw_matrix,annotation_file,status,notes
+tenx-flex-small-intestine,public,mouse,small_intestine,healthy,Flex,fixed,7.1.0,mm10,benchmarks/data/tenx-flex-small-intestine/filtered_feature_bc_matrix.h5,benchmarks/data/tenx-flex-small-intestine/raw_feature_bc_matrix.h5,,ready,"Official 10x dataset; healthy C57BL/6; chemistry differs from Universal 3 prime"
+GSE142471-unwounded-1,public,mouse,skin,unwounded,3prime-v2,fresh,2.1.0,mm10,benchmarks/data/GSE142471/GSM4230076-Un-Wounded-1,,,selected_pending_download,"Adult mouse back skin; called-cell MTX only"
+GSE142471-unwounded-2,public,mouse,skin,unwounded,3prime-v2,fresh,2.1.0,mm10,benchmarks/data/GSE142471/GSM4230077-Un-Wounded-2,,,selected_pending_download,"Independent adult mouse back-skin control; called-cell MTX only"
+tabula-muris-droplet,rejected,mouse,skin,healthy,3prime-v2,fresh,,mm10,,,,rejected,"Downloaded release 5968960 contains no skin matrices or skin cells; do not use as a skin benchmark"

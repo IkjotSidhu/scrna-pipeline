@@ -1,0 +1,2 @@
+dataset_id,source_type,species,tissue,condition,chemistry,preparation,cellranger_version,reference_id,filtered_matrix,raw_matrix,annotation_file,status,notes
+naiklab-example,internal,mouse,small_intestine,control,3prime-v3.1,fresh,9.0.1,mm10-2020-A,/absolute/path/to/filtered_feature_bc_matrix.h5,/absolute/path/to/raw_feature_bc_matrix.h5,/absolute/path/to/cell_annotations.csv,candidate,"Replace this example row; do not include patient identifiers"

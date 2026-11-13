@@ -1,0 +1,4 @@
+library_id,sample_id,donor_id,species,tissue,condition,batch_id,reference_id,analysis_group,filtered_matrix,raw_matrix,cell_metadata,ambient_method,dataset_role,cellranger_metrics
+tenx-flex-small-intestine,tenx-flex-small-intestine,public-tenx-donor,mouse,small_intestine,healthy,tenx-flex-7.1.0,mm10,public-small-intestine,../data/tenx-flex-small-intestine/filtered_feature_bc_matrix.h5,../data/tenx-flex-small-intestine/raw_feature_bc_matrix.h5,,soupx,public_benchmark,../data/tenx-flex-small-intestine/metrics_summary.csv
+GSM4230076,GSM4230076,published-control-1,mouse,skin,unwounded,GSE142471,mm10,public-skin,../data/GSE142471/GSM4230076-Un-Wounded-1,,,decontx,public_benchmark,
+GSM4230077,GSM4230077,published-control-2,mouse,skin,unwounded,GSE142471,mm10,public-skin,../data/GSE142471/GSM4230077-Un-Wounded-2,,,decontx,public_benchmark,
